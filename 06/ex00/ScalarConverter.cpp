@@ -29,11 +29,11 @@ e_kewword get_keyword(const char *literal)
 
     if (str == "nanf")
         return NANF;
-    if (str == "inf")
+    if (str == "+inff")
         return INFF;
     if (str == "nan") 
         return NAN;
-    if (str == "inf")
+    if (str == "+inf")
         return INF;
     if (str == "-inff")
         return M_INFF;
