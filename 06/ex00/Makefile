@@ -1,4 +1,4 @@
-C++FLAGS = #-Wall -Wextra -Werror -std=c++98
+C++FLAGS = -Wall -Wextra -Werror -std=c++98
 NAME = exe
 SRCS = main.cpp ScalarConverter.cpp
 OBJS = $(SRCS:%.cpp=%.o)
