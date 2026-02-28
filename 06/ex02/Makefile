@@ -1,9 +1,9 @@
 C++ = c++
 C++FLAGS = -Wall -Wextra -Werror -std=c++98
 NAME = exe
-SRCS = main.cpp ScalarConverter.cpp
+SRCS = main.cpp Base.cpp
 OBJS = $(SRCS:%.cpp=%.o)
-INC = ScalarConverter.hpp
+INC = Base.hpp A.hpp B.hpp C.hpp
 
 all : $(NAME)
 

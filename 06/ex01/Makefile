@@ -1,9 +1,9 @@
 C++ = c++
 C++FLAGS = -Wall -Wextra -Werror -std=c++98
 NAME = exe
-SRCS = main.cpp ScalarConverter.cpp
+SRCS = main.cpp Serializer.cpp Data.cpp
 OBJS = $(SRCS:%.cpp=%.o)
-INC = ScalarConverter.hpp
+INC = Serializer.hpp Data.hpp
 
 all : $(NAME)
 
