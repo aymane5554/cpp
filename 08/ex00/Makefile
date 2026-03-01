@@ -1,9 +1,9 @@
-C++ = c++
+C++ = g++
 C++FLAGS = -Wall -Wextra -Werror -std=c++98
 NAME = exe
-SRCS = main.cpp Bureaucrat.cpp Form.cpp
+SRCS = main.cpp
 OBJS = $(SRCS:%.cpp=%.o)
-INC = Bureaucrat.hpp Form.hpp
+INC = easyfind.hpp
 
 all : $(NAME)
 

@@ -3,7 +3,7 @@ C++FLAGS = -Wall -Wextra -Werror -std=c++98
 NAME = exe
 SRCS = main.cpp
 OBJS = $(SRCS:%.cpp=%.o)
-INC = iter.hpp
+INC = = Array.hpp
 
 all : $(NAME)
 
