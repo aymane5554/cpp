@@ -16,7 +16,7 @@ class Form
         ~Form();
         Form(int sg, int eg, int is, const std::string n);
         Form(const Form &obj);
-        const Form &operator=(const Form &obj);
+        Form &operator=(const Form &obj);
         class GradeTooHighException : public std::exception
         {
             private:
