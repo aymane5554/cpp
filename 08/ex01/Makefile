@@ -1,9 +1,9 @@
 C++ = c++
 C++FLAGS = -Wall -Wextra -Werror -std=c++98
 NAME = exe
-SRCS = main.cpp Base.cpp
+SRCS = main.cpp Span.cpp
 OBJS = $(SRCS:%.cpp=%.o)
-INC = Base.hpp A.hpp B.hpp C.hpp
+INC = Span.hpp
 
 all : $(NAME)
 
