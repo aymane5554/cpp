@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <stdexcept>
+#include <algorithm>
 
 class Span
 {
@@ -17,5 +18,17 @@ class Span
         int shortestSpan() const;
         int longestSpan() const;
         void addNumber(int num);
-        void addNumbers(int num[], size_t N);
+        template <typename I>
+        void addNumbers(I begin, I end)
+        {
+            I it;
+            for (it = begin; it != end; it++)
+            {
+                if (length >= size)
+                    throw std::out_of_range("Span is Full");
+                arr[length] = *it;
+                length++;
+            }
+        }
+
 };

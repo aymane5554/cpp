@@ -44,17 +44,6 @@ Span::~Span()
     delete arr;
 }
 
-void Span::addNumbers(int num[], size_t N)
-{
-    for (size_t i = 0; i < N; i++)
-    {
-        if (length >= size)
-            throw std::out_of_range("No Space Left");
-        arr[length] = num[i];
-        length++;
-    }
-}
-
 void Span::addNumber(int num)
 {
     if (length >= size)
@@ -62,13 +51,40 @@ void Span::addNumber(int num)
     arr[length] = num;
     length++;
 }
-
-int Span::shortestSpan() const
-{
-    return (0);
-}
+    
 int Span::longestSpan() const
 {
+    int max;
+    int min;
 
-    return (0);
+    if (length < 2)
+        throw std::runtime_error("not enough numbers");
+    max = *std::max_element(arr, arr + length);
+    min = *std::min_element(arr, arr + length);
+
+    return (max - min);
+}
+
+int Span::shortestSpan() const 
+{
+    if (length < 2)
+        throw std::runtime_error("not enough numbers");
+    Span copy(*this);
+    std::sort(copy.arr, copy.arr + copy.length);
+
+    int shortest = 2147483647;
+    for (size_t i = 1; i < copy.length; i++)
+    {
+        if (arr[i - 1 ] > arr[i])
+        {
+            if  (arr[i - 1] - arr[i] < shortest)
+                shortest = arr[i - 1 ] - arr[i];
+        }
+        else if (arr[i - 1] < arr[i])
+        {
+            if  (arr[i] - arr[i - 1] < shortest)
+                shortest = arr[i] - arr[i - 1];
+        }
+    }
+    return shortest;
 }
