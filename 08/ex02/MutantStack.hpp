@@ -2,81 +2,34 @@
 
 #include <stack>
 
-template <typename T>
-class MutantStack: public std::stack<T>
+template <typename T, class Container = std::deque<T> >
+class MutantStack: public std::stack<T, Container>
 {
     public:
-        class iterator
+        typedef typename Container::iterator iterator;
+        typedef typename Container::const_iterator const_iterator;
+        const_iterator begin() const
         {
-            public:
-                T *ptr;
-                iterator ()
-                {
-                    ptr = 0;
-                }
-                ~iterator()
-                {}
-                iterator (const iterator &it)
-                {
-                    ptr = it.ptr;
-                }
-                iterator &operator=(const iterator& it)
-                {
-                    ptr = it.ptr;
-                }
-                T operator*()
-                {
-                    return *ptr;
-                }
-                bool operator!=(const iterator &it)
-                {
-                    return ptr != it.ptr;
-                }
-                bool operator==(const iterator &it)
-                {
-                    return ptr == it.ptr;
-                }
-                iterator &operator++()
-                {
-                    ptr--;
-                    return *this;
-                }
-                iterator operator++(int)
-                {
-                    iterator tmp(*this);
-                    ptr--;
-                    return tmp;
-                }
-                iterator &operator--()
-                {
-                    ptr++;
-                    return *this;
-                }
-                iterator operator--(int)
-                {
-                    iterator tmp(*this);
-                    ptr++;
-                    return tmp;
-                }
-        };
-        MutantStack<T>::iterator begin()
-        {
-            iterator it;
-            
-            if (this->c.empty())
-                it.ptr = 0;
-            else
-                it.ptr =  &this->c.back();
-            return it;
+            return this->c.begin();
         }
-        MutantStack<T>::iterator end()
+        const_iterator end() const
         {
-            iterator it;
-            
-            if (this->c.empty())
-                it.ptr = 0;
-            else
-                it.ptr =  &this->c.front();
-            return it;
+            return this->c.end();
         }
+        iterator begin()
+        {
+            return this->c.begin();
+        }
+        iterator end()
+        {
+            return this->c.end();
+        }
+        MutantStack() {}
+        MutantStack(const MutantStack& other): std::stack<T, Container>(other) {}
+        MutantStack& operator=(const MutantStack& other)
+        {
+            std::stack<T, Container>::operator=(other);
+            return *this;
+        }
+        ~MutantStack() {}
 };
