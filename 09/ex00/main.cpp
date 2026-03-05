@@ -7,6 +7,14 @@ int main(int argc, char **argv)
         std::cerr << "Usage: ./btc input.txt" << std::endl;
         return (1);
     }
-    BitcoinExchange btc(argv[1]);
+    try
+    {
+        BitcoinExchange btc(argv[1]);
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+    
     return (0);
 }

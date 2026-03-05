@@ -23,6 +23,8 @@ BitcoinExchange::BitcoinExchange (char *input)
             delete in_file;
         throw ;
     }
+    read_db();
+    read_input();
 }
 
 BitcoinExchange::BitcoinExchange ()
@@ -31,6 +33,7 @@ BitcoinExchange::BitcoinExchange ()
     in_file = new std::ifstream;
     db_file->open("data.csv");
     read_db();
+    read_input();
 }
 
 BitcoinExchange::~BitcoinExchange()
@@ -45,6 +48,7 @@ BitcoinExchange::BitcoinExchange(const BitcoinExchange &obj)
     in_file = obj.in_file;
     db = obj.db;
     read_db();
+    read_input();
 }
 
 BitcoinExchange &BitcoinExchange::operator =(const BitcoinExchange &obj)
@@ -84,6 +88,16 @@ void BitcoinExchange::read_db()
     }
 }
 
+void strim(std::string &str)
+{
+    size_t start = str.find_first_not_of(" \t");
+    size_t end = str.find_last_not_of(" \t");
+    if (start == std::string::npos || end == std::string::npos)
+        str = "";
+    else
+        str = str.substr(start, end - start + 1);
+}
+
 void parse_date(std::string &date)
 {
     int year, mon, day;
@@ -98,9 +112,14 @@ void parse_date(std::string &date)
     if (pos2 == std::string::npos)
         throw std::runtime_error("error -> " + date);
     
+    if (pos1 == date.size() -1 || pos2 == date.size() - 1)
+        throw std::runtime_error("error -> " + date);
     ystr = date.substr(0, pos1);
-    mstr = date.substr(pos1 + 1, pos2);
+    mstr = date.substr(pos1 + 1, pos2 - pos1 - 1);
     dstr = date.substr(pos2 + 1);
+    strim(ystr);
+    strim(mstr);
+    strim(dstr);
     year = strtol(ystr.c_str(), &end, 10);
     if (*end != '\0' || errno == ERANGE || year < 2009 || year > 2022)
         throw std::runtime_error("error -> " + date);
@@ -109,32 +128,65 @@ void parse_date(std::string &date)
     if (*end != '\0' || errno == ERANGE || mon < 1 || mon > 12)
         throw std::runtime_error("error -> " + date);
     end = NULL;
-    day = strtol(mstr.c_str(), &end, 10);
+    day = strtol(dstr.c_str(), &end, 10);
     if (*end != '\0' || errno == ERANGE || day < 0 || day > 31)
     {
         throw std::runtime_error("error -> " + date);
     }
+    if (mon == 2 && day > 28)
+    {
+        if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)
+            return ;
+        throw std::runtime_error("error -> " + date);
+    }
+    if (mon < 8)
+    {
+        if (mon % 2 == 0 && day == 31)
+        {
+            throw std::runtime_error("error -> " + date);
+        }
+        return ;
+    }
+    if (mon >= 8)
+    {
+        if (mon % 2 != 0 && day == 31)
+        {
+            throw std::runtime_error("error -> " + date);
+        }
+        return ;
+    }
+    
 }
 
 void BitcoinExchange::read_input()
 {
     std::string line;
     std::string date;
+    std::string num;
     size_t pos;
     char *end;
     double   price;
 
     std::getline(*in_file, line);
+    strim(line);
+    if (line != "date | value")
+        throw std::runtime_error("error no header");
     while (std::getline(*in_file, line))
     {
         pos = line.find('|');
+        if (pos == line.size() - 1)
+            throw std::runtime_error("error -> " + line);
         if (pos != std::string::npos)
         {
             date = line.substr(0, pos - 1);
             parse_date(date);
             end = NULL;
             errno = 0;
-            price = strtod(line.substr(pos + 2).c_str(), &end);
+            num = line.substr(pos + 1);
+            strim(num);
+            if (num.length() == 0)
+                throw std::runtime_error("error -> " + line);
+            price = strtod(num.c_str(), &end);
             if (*end != '\0' || errno == ERANGE || price < 0 || price > 1000.0)
                 throw std::runtime_error("error -> " + line);
             db.insert(std::make_pair(date, price));
