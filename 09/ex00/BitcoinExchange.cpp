@@ -1,5 +1,10 @@
 #include "BitcoinExchange.hpp"
 
+void BitcoinExchange::exec(const std::pair<std::string, double> &in)
+{
+    std::cout << in.first << "=> " << in.second << " = " << db.lower_bound(in.first)->second * in.second << std::endl;
+}
+
 BitcoinExchange::BitcoinExchange (char *input)
 {
     db_file = NULL;
@@ -23,17 +28,53 @@ BitcoinExchange::BitcoinExchange (char *input)
             delete in_file;
         throw ;
     }
-    read_db();
-    read_input();
+    try
+    {
+        read_db();
+        read_input();
+    }
+    catch(const std::exception& e)
+    {
+        delete db_file;
+        delete in_file;
+        throw ;
+    }
 }
 
 BitcoinExchange::BitcoinExchange ()
 {
-    db_file = new std::ifstream;
-    in_file = new std::ifstream;
-    db_file->open("data.csv");
-    read_db();
-    read_input();
+    db_file = NULL;
+    in_file = NULL;
+    try 
+    {
+        db_file = new std::ifstream;
+        in_file = new std::ifstream;
+        db_file->open("data.csv");
+        if (db_file->fail())
+            throw std::runtime_error("Error Opening DataBase");
+        in_file->open("input.txt");
+        if (in_file->fail())
+            throw std::runtime_error("Error Opening Input File");
+    }
+    catch (std::exception &e)
+    {
+        if (db_file)
+            delete db_file;
+        if (in_file)
+            delete in_file;
+        throw ;
+    }
+    try
+    {
+        read_db();
+        read_input();
+    }
+    catch(const std::exception& e)
+    {
+        delete db_file;
+        delete in_file;
+        throw ;
+    }
 }
 
 BitcoinExchange::~BitcoinExchange()
@@ -47,8 +88,17 @@ BitcoinExchange::BitcoinExchange(const BitcoinExchange &obj)
     db_file = obj.db_file;
     in_file = obj.in_file;
     db = obj.db;
-    read_db();
-    read_input();
+    try
+    {
+        read_db();
+        read_input();
+    }
+    catch(const std::exception& e)
+    {
+        delete db_file;
+        delete in_file;
+        throw ;
+    }
 }
 
 BitcoinExchange &BitcoinExchange::operator =(const BitcoinExchange &obj)
@@ -173,25 +223,32 @@ void BitcoinExchange::read_input()
         throw std::runtime_error("error no header");
     while (std::getline(*in_file, line))
     {
-        pos = line.find('|');
-        if (pos == line.size() - 1)
-            throw std::runtime_error("error -> " + line);
-        if (pos != std::string::npos)
+        try
         {
-            date = line.substr(0, pos - 1);
-            parse_date(date);
-            end = NULL;
-            errno = 0;
-            num = line.substr(pos + 1);
-            strim(num);
-            if (num.length() == 0)
+            pos = line.find('|');
+            if (pos == line.size() - 1)
                 throw std::runtime_error("error -> " + line);
-            price = strtod(num.c_str(), &end);
-            if (*end != '\0' || errno == ERANGE || price < 0 || price > 1000.0)
+            if (pos != std::string::npos)
+            {
+                date = line.substr(0, pos - 1);
+                parse_date(date);
+                end = NULL;
+                errno = 0;
+                num = line.substr(pos + 1);
+                strim(num);
+                if (num.length() == 0)
+                    throw std::runtime_error("error -> " + line);
+                price = strtod(num.c_str(), &end);
+                if (*end != '\0' || errno == ERANGE || price < 0 || price > 1000.0)
+                    throw std::runtime_error("error -> " + line);
+                exec(std::make_pair(date, price));
+            }
+            else
                 throw std::runtime_error("error -> " + line);
-            db.insert(std::make_pair(date, price));
         }
-        else
-            throw std::runtime_error("error -> " + line);
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+        }
     }
 }

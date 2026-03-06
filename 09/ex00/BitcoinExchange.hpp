@@ -12,9 +12,11 @@
 class BitcoinExchange
 {
     std::map <std::string, double> db;
-    std::map <std::string, double> input;
     std::ifstream *db_file;
     std::ifstream *in_file;
+    void read_db();
+    void read_input();
+    void exec(const std::pair<std::string, double> &in);
 
     public:
         BitcoinExchange (char *input);
@@ -22,6 +24,4 @@ class BitcoinExchange
         ~BitcoinExchange();
         BitcoinExchange(const BitcoinExchange &obj);
         BitcoinExchange &operator =(const BitcoinExchange &obj);
-        void read_db();
-        void read_input();
 };
