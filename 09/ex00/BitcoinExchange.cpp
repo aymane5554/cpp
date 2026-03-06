@@ -241,6 +241,7 @@ void BitcoinExchange::read_input()
                 price = strtod(num.c_str(), &end);
                 if (*end != '\0' || errno == ERANGE || price < 0 || price > 1000.0)
                     throw std::runtime_error("error -> " + line);
+                strim(date);
                 exec(std::make_pair(date, price));
             }
             else
