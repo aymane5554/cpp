@@ -2,6 +2,7 @@
 
 PmergeMe::PmergeMe()
 {
+    straggler = -1;
 }
 
 PmergeMe::PmergeMe(const PmergeMe& other)
@@ -17,7 +18,7 @@ PmergeMe& PmergeMe::operator=(const PmergeMe& other)
         this->v = other.v;
         this->wins = other.wins;
         this->loss = other.loss;
-        
+        this->straggler = other.straggler;
     }
     return *this;
 }
@@ -32,6 +33,14 @@ void PmergeMe::init_pairs(int argc, char **argv)
     long long tmp;
     int a, b;
 
+    if ((argc - 1) % 2 != 0)
+    {
+        tmp = strtol(argv[argc - 1], &end, 10);
+        if (*end != '\0' || errno == ERANGE || tmp > 2147483647 || tmp < 0)
+            throw std::runtime_error("Error");
+        straggler = tmp;
+        argc--;
+    }
     for (int i = 1; i < argc; i++)
     {
         errno = 0;
@@ -57,20 +66,23 @@ void PmergeMe::init_pairs(int argc, char **argv)
     }
 }
 
-void PmergeMe::sort_winners_deque()
+void PmergeMe::sort(int argc, char **argv)
 {
-    for (size_t i = 0; i < wins.size(); i++)
+    init_pairs(argc, argv);
+    sort_winners(this->d);
+    sort_winners(this->v);
+    sort_losers(this->d);
+    sort_losers(this->v);
+
+    for (size_t i = 0; i < d.size(); i++)
     {
-        d.push_back(wins[i]);
+        std::cout << " " << d[i];
     }
-    std::sort(d.begin(), d.end());
+    std::cout << std::endl;
+    for (size_t i = 0; i < v.size(); i++)
+    {
+        std::cout << " " << v[i];
+    }
+    std::cout << std::endl;
 }
 
-void PmergeMe::sort_winners_vec()
-{
-    for (size_t i = 0; i < wins.size(); i++)
-    {
-        v.push_back(wins[i]);
-    }
-    std::sort(v.begin(), v.end());
-}
