@@ -196,11 +196,33 @@ void PmergeMe::merge_losers_deque(std::vector<int> &losers, std::vector<int> &wi
 void PmergeMe::sort(int argc, char **argv)
 {
     std::vector <int> nums;
+    std::vector <int> nums2;
 
+    clock_t start = clock();
     parse_input(argc, argv, nums);
     sort_vec(nums);
+    clock_t end = clock();
+    
+    clock_t start2 = clock();
+    parse_input(argc, argv, nums2);
+    sort_deque(nums2);
+    clock_t end2 = clock();
+
+    std::cout << "Before: ";
+    for (size_t i = 0; i < nums.size(); i++)
+    {
+        std::cout << nums[i] << " ";
+    }
+    std::cout << std::endl;
+    std::cout << "After: ";
     for (size_t i = 0; i < v.size(); i++)
     {
-        std::cout << v[i] << std::endl;
+        std::cout << v[i] << " ";
     }
+    std::cout << std::endl;
+
+    double time_vec = static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000;
+    double time_deque = static_cast<double>(end2 - start2) / CLOCKS_PER_SEC * 1000;
+    std::cout << "Time taken by std::vector: " << time_vec << " ms" << std::endl;
+    std::cout << "Time taken by std::deque: " << time_deque << " ms" << std::endl;
 }
