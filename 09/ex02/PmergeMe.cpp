@@ -13,7 +13,6 @@ PmergeMe& PmergeMe::operator=(const PmergeMe& other)
 {
     if (this != &other)
     {
-        this->d = other.d;
         this->v = other.v;
     }
     return *this;
@@ -67,52 +66,17 @@ void PmergeMe::parse_input(int argc, char **argv, std::vector <int> &nums)
     }
 }
 
-void PmergeMe::sort_vec(std::vector <int> nums)
+std::vector<int> insertion_order(const std::vector<int> &jacob)
 {
-    if (nums.size() == 2)
-    {
-        if (nums[0] > nums[1])
-        {
-            v.push_back(nums[1]);
-            v.push_back(nums[0]);
-        }
-        else
-        {
-            v.push_back(nums[0]);
-            v.push_back(nums[1]);
-        }
-        return ;
-    }
-    std::vector <int> winners;
-    std::vector <int> losers;
-    int stragler = -1;
-    make_pairs(winners, losers, nums, stragler);
-    sort_vec(winners);
-    merge_losers_vec(losers, stragler);
-}
+    std::vector<int> order;
 
-void PmergeMe::sort_deque(std::vector <int> nums)
-{
-    if (nums.size() == 2)
+    for (size_t i = 2; i < jacob.size(); i++)
     {
-        if (nums[0] > nums[1])
-        {
-            d.push_back(nums[1]);
-            d.push_back(nums[0]);
-        }
-        else
-        {
-            d.push_back(nums[0]);
-            d.push_back(nums[1]);
-        }
-        return ;
+        order.push_back(jacob[i]);
+        for (int k = jacob[i] - 1; k > jacob[i-1]; k--)
+            order.push_back(k);
     }
-    std::vector <int> winners;
-    std::vector <int> losers;
-    int stragler = -1;
-    make_pairs(winners, losers, nums, stragler);
-    sort_deque(winners);
-    merge_losers_deque(losers, stragler);
+    return order;
 }
 
 std::vector<int> PmergeMe::jacobsthal_seq(size_t size)
@@ -120,32 +84,113 @@ std::vector<int> PmergeMe::jacobsthal_seq(size_t size)
     std::vector<int> jacob;
 
     jacob.push_back(0);
-    if (!size)
-    {
+    if (size == 0)
         return jacob;
-    }
     jacob.push_back(1);
     if (size == 1)
-    {
         return jacob;
-    }
-    jacob.push_back(0);
-    jacob.push_back(1);
-    for (int i = 2; i <= size; i++)
+    while (jacob.back() < (int)size)
     {
-        jacob.push_back(jacob[i - 1] + 2 * jacob[i - 2]);
+        int num = jacob.back() + 2 * jacob[jacob.size()-2];
+        jacob.push_back(num);
     }
-    return (jacob);     
+    return (jacob);
 }
 
-void PmergeMe::merge_losers_vec(std::vector <int> &losers, int stragler)
+void PmergeMe::sort_deque(std::vector<int> nums)
 {
-    std::vector <int>jacob = jacobsthal_seq(losers.size());
+    if (nums.size() == 1)
+    {
+        d.push_back(nums[0]);
+        return;
+    }
+    std::vector<int> winners;
+    std::vector<int> losers;
+    int stragler = -1;
+    make_pairs(winners, losers, nums, stragler);
+    sort_deque(winners);
+
+    std::deque<int>::iterator it = std::upper_bound(d.begin(), d.end(), winners[0]);
+    std::deque<int>::iterator in = std::lower_bound(d.begin(), it, losers[0]);
+    d.insert(in, losers[0]);
+
+    merge_losers_deque(losers, winners, stragler);
 }
 
-void PmergeMe::merge_losers_deque(std::vector <int> &losers, int stragler)
+void PmergeMe::sort_vec(std::vector<int> nums)
 {
-    std::vector <int>jacob = jacobsthal_seq(losers.size());
+    if (nums.size() == 1)
+    {
+        v.push_back(nums[0]);
+        return;
+    }
+    std::vector<int> winners;
+    std::vector<int> losers;
+    int stragler = -1;
+    make_pairs(winners, losers, nums, stragler);
+    sort_vec(winners);
+
+    std::vector<int>::iterator it = std::upper_bound(v.begin(), v.end(), winners[0]);
+    std::vector<int>::iterator in = std::lower_bound(v.begin(), it, losers[0]);
+    v.insert(in, losers[0]);
+
+    merge_losers_vec(losers, winners, stragler);
+}
+
+void PmergeMe::merge_losers_vec(std::vector<int> &losers, std::vector<int> &winners, int stragler)
+{
+    std::vector<int> jacob = jacobsthal_seq(losers.size());
+    std::vector<int> order = insertion_order(jacob);
+
+    size_t i = 0;
+    while (i < order.size())
+    {
+        int idx = order[i];
+        if (idx <= 0 || idx >= (int)losers.size())
+        {
+            i++;
+            continue;
+        }
+        int win = winners[idx];
+        int los = losers[idx];
+        std::vector<int>::iterator it = std::upper_bound(v.begin(), v.end(), win);
+        std::vector<int>::iterator in = std::lower_bound(v.begin(), it, los);
+        v.insert(in, los);
+        i++;
+    }
+    if (stragler != -1)
+    {
+        std::vector<int>::iterator in = std::lower_bound(v.begin(), v.end(), stragler);
+        v.insert(in, stragler);
+    }
+}
+
+void PmergeMe::merge_losers_deque(std::vector<int> &losers, std::vector<int> &winners, int stragler)
+{
+    std::vector<int> jacob = jacobsthal_seq(losers.size());
+    std::vector<int> order = insertion_order(jacob);
+
+    size_t i = 0;
+    while (i < order.size())
+    {
+        int idx = order[i];
+        if (idx <= 0 || idx >= (int)losers.size())
+        {
+            i++;
+            continue;
+        }
+        int win = winners[idx];
+        int los = losers[idx];
+        std::deque<int>::iterator it = std::upper_bound(d.begin(), d.end(), win);
+        std::deque<int>::iterator in = std::lower_bound(d.begin(), it, los);
+        d.insert(in, los);
+        i++;
+    }
+    if (stragler != -1)
+    {
+        std::deque<int>::iterator in = std::lower_bound(d.begin(), d.end(), stragler);
+        d.insert(in, stragler);
+    }
 }
 
 void PmergeMe::sort(int argc, char **argv)
@@ -154,5 +199,8 @@ void PmergeMe::sort(int argc, char **argv)
 
     parse_input(argc, argv, nums);
     sort_vec(nums);
-    sort_deque(nums);
+    for (size_t i = 0; i < v.size(); i++)
+    {
+        std::cout << v[i] << std::endl;
+    }
 }

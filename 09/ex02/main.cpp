@@ -12,6 +12,7 @@ int main(int argc, char* argv[])
     try
     {
         PmergeMe sorter;
+        sorter.sort(argc, argv);
     }
     catch(const std::exception& e)
     {
