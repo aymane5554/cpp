@@ -2,7 +2,6 @@
 
 PmergeMe::PmergeMe()
 {
-    straggler = -1;
 }
 
 PmergeMe::PmergeMe(const PmergeMe& other)
@@ -16,7 +15,6 @@ PmergeMe& PmergeMe::operator=(const PmergeMe& other)
     {
         this->d = other.d;
         this->v = other.v;
-        this->straggler = other.straggler;
     }
     return *this;
 }
@@ -30,7 +28,7 @@ bool isduplicate(const std::vector<int>& nums, int num)
     return std::find(nums.begin(), nums.end(), num) != nums.end();
 }
 
-void PmergeMe::make_pairs(std::vector <int> winners, std::vector <int> losers, std::vector <int> nums)
+void PmergeMe::make_pairs(std::vector <int> &winners, std::vector <int> &losers, std::vector <int> &nums, int &_straggler)
 {
     for (size_t i = 0; i < nums.size(); i += 2)
     {
@@ -49,7 +47,7 @@ void PmergeMe::make_pairs(std::vector <int> winners, std::vector <int> losers, s
         }
         else
         {
-            straggler = nums[i];
+            _straggler = nums[i];
         }
     }
 }
@@ -67,7 +65,6 @@ void PmergeMe::parse_input(int argc, char **argv, std::vector <int> &nums)
             throw std::runtime_error("Error");
         nums.push_back(tmp);
     }
-    this->straggler = -1;
 }
 
 void PmergeMe::sort_vec(std::vector <int> nums)
@@ -88,9 +85,10 @@ void PmergeMe::sort_vec(std::vector <int> nums)
     }
     std::vector <int> winners;
     std::vector <int> losers;
-    make_pairs(winners, losers, nums);
+    int stragler = -1;
+    make_pairs(winners, losers, nums, stragler);
     sort_vec(winners);
-    merge_losers_vec(losers);
+    merge_losers_vec(losers, stragler);
 }
 
 void PmergeMe::sort_deque(std::vector <int> nums)
@@ -111,21 +109,43 @@ void PmergeMe::sort_deque(std::vector <int> nums)
     }
     std::vector <int> winners;
     std::vector <int> losers;
-    make_pairs(winners, losers, nums);
+    int stragler = -1;
+    make_pairs(winners, losers, nums, stragler);
     sort_deque(winners);
-    merge_losers_deque(losers);
+    merge_losers_deque(losers, stragler);
 }
 
-std::vector<int> PmergeMe::jacobsthal_seq()
+std::vector<int> PmergeMe::jacobsthal_seq(size_t size)
 {
+    std::vector<int> jacob;
+
+    jacob.push_back(0);
+    if (!size)
+    {
+        return jacob;
+    }
+    jacob.push_back(1);
+    if (size == 1)
+    {
+        return jacob;
+    }
+    jacob.push_back(0);
+    jacob.push_back(1);
+    for (int i = 2; i <= size; i++)
+    {
+        jacob.push_back(jacob[i - 1] + 2 * jacob[i - 2]);
+    }
+    return (jacob);     
 }
 
-void PmergeMe::merge_losers_vec(std::vector <int> losers)
+void PmergeMe::merge_losers_vec(std::vector <int> &losers, int stragler)
 {
+    std::vector <int>jacob = jacobsthal_seq(losers.size());
 }
 
-void PmergeMe::merge_losers_deque(std::vector <int> losers)
-{ 
+void PmergeMe::merge_losers_deque(std::vector <int> &losers, int stragler)
+{
+    std::vector <int>jacob = jacobsthal_seq(losers.size());
 }
 
 void PmergeMe::sort(int argc, char **argv)
