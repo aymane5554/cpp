@@ -19,7 +19,7 @@ RobotomyRequestForm::RobotomyRequestForm(const RobotomyRequestForm &copy): AForm
 {
 }
 
-const RobotomyRequestForm &RobotomyRequestForm::operator=(const RobotomyRequestForm &copy)
+RobotomyRequestForm &RobotomyRequestForm::operator=(const RobotomyRequestForm &copy)
 {
     AForm::operator=(copy);
     return *this;

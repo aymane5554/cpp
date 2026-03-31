@@ -22,7 +22,7 @@ Form::Form(const Form &obj): name(obj.name), is_signed(obj.is_signed), sign_grad
         throw Form::GradeTooHighException();
 }
 
-const Form &Form::operator=(const Form &obj)
+Form &Form::operator=(const Form &obj)
 {
     if (obj.sign_grade > 150 || obj.exec_grade > 150)
         throw Form::GradeTooLowException();
