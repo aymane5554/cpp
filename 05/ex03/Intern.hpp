@@ -17,10 +17,8 @@ class Intern
             private:
                 std::string msg;
             public:
-                FormNotFoundException() : msg("Form Not Found\n") {}
-                ~FormNotFoundException() throw() {}
-                virtual const char *what() const throw()    {
-                    return msg.c_str();
-                }
+                FormNotFoundException();
+                ~FormNotFoundException() throw();
+                virtual const char *what() const throw();
         };
 };  

@@ -43,3 +43,17 @@ void AForm::beSigned(Bureaucrat &obj)
         throw AForm::GradeTooLowException();
     is_signed = true;
 }
+
+AForm::GradeTooHighException::GradeTooHighException(): msg("Grade Too High\n") {};
+AForm::GradeTooHighException::~GradeTooHighException() throw() {};
+const char * AForm::GradeTooHighException::what() const throw()
+{
+    return msg.c_str();
+}
+
+AForm::GradeTooLowException::GradeTooLowException(): msg("Grade Too Low\n") {};
+AForm::GradeTooLowException::~GradeTooLowException() throw() {};
+const char  *AForm::GradeTooLowException::what() const throw()
+{
+    return msg.c_str();
+}

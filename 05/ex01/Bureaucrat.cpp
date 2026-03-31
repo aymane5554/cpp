@@ -71,3 +71,16 @@ void Bureaucrat::signForm(Form &form)
         std::cerr << getName() << "couldn’t sign " << form.getName() << " because " << e.what() << '\n';
     }
 }
+
+Bureaucrat::GradeTooHighException::GradeTooHighException(): msg("Grade Too High\n") {}
+Bureaucrat::GradeTooHighException::~GradeTooHighException() throw() {}
+Bureaucrat::GradeTooLowException::GradeTooLowException(): msg("Grade Too Low\n") {}
+Bureaucrat::GradeTooLowException::~GradeTooLowException() throw() {}
+const char *Bureaucrat::GradeTooHighException::what() const throw()
+{
+    return msg.c_str();
+}
+const char *Bureaucrat::GradeTooLowException::what() const throw()
+{
+    return msg.c_str();
+}

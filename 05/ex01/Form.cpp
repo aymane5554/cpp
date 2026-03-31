@@ -36,10 +36,24 @@ const std::string& Form::getName() const { return name; }
 bool Form::getIsSigned() const { return is_signed; }
 int Form::getSignGrade() const { return sign_grade; }
 int Form::getExecGrade() const { return exec_grade; }
-
+    
 void Form::beSigned(Bureaucrat &obj)
 {
     if (sign_grade < obj.getGrade())
         throw Form::GradeTooLowException();
     is_signed = true;
+}
+
+Form::GradeTooHighException::GradeTooHighException(): msg("Grade Too High\n") {};
+Form::GradeTooHighException::~GradeTooHighException() throw() {};
+const char * Form::GradeTooHighException::what() const throw()
+{
+    return msg.c_str();
+}
+
+Form::GradeTooLowException::GradeTooLowException(): msg("Grade Too Low\n") {};
+Form::GradeTooLowException::~GradeTooLowException() throw() {};
+const char  *Form::GradeTooLowException::what() const throw()
+{
+    return msg.c_str();
 }

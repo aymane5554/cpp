@@ -29,3 +29,10 @@ AForm *Intern::makeForm(const std::string &formName, const std::string &target)
         delete forms[i];
     throw FormNotFoundException();
 }
+
+Intern::FormNotFoundException::FormNotFoundException() : msg("Form Not Found\n") {}
+Intern::FormNotFoundException::~FormNotFoundException() throw() {}
+const char *Intern::FormNotFoundException::what() const throw()
+{
+    return msg.c_str();
+}
