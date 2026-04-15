@@ -16,7 +16,7 @@ Span::Span(size_t N)
 
 Span::Span(const Span &copy)
 {
-    arr = new int[copy.size];
+    arr = new int[copy.size]();
     size = copy.size;
     length = copy.length;
     for (size_t i = 0; i < copy.length; i++)
@@ -27,7 +27,7 @@ Span::Span(const Span &copy)
 
 Span &Span::operator=(const Span &copy)
 {
-    int *tmp = new int[copy.size];
+    int *tmp = new int[copy.size]();
     delete arr;
     arr = tmp;
     size = copy.size;
@@ -78,7 +78,7 @@ int Span::shortestSpan() const
         if (arr[i - 1 ] > arr[i])
         {
             if  (arr[i - 1] - arr[i] < shortest)
-                shortest = arr[i - 1 ] - arr[i];
+                shortest = arr[i - 1] - arr[i];
         }
         else if (arr[i - 1] < arr[i])
         {

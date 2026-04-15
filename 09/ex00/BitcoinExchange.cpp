@@ -130,7 +130,7 @@ void BitcoinExchange::read_db()
             date = line.substr(0, pos);
             end = NULL;
             errno = 0;
-            price = strtod(line.substr(pos + 1).c_str(), &end);
+            price = std::strtod(line.substr(pos + 1).c_str(), &end);
             if (*end != '\0' || errno == ERANGE)
                 throw std::runtime_error("error -> " + line);
             db.insert(std::make_pair(date, price));
