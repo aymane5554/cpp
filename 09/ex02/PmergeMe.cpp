@@ -146,7 +146,7 @@ void PmergeMe::merge_losers_vec(std::vector<int> &losers, std::vector<int> &winn
     while (i < order.size())
     {
         int idx = order[i];
-        if (idx <= 0 || idx >= (int)losers.size())
+        if ((size_t)idx >= losers.size())
         {
             i++;
             continue;
@@ -174,7 +174,7 @@ void PmergeMe::merge_losers_deque(std::vector<int> &losers, std::vector<int> &wi
     while (i < order.size())
     {
         int idx = order[i];
-        if (idx <= 0 || idx >= (int)losers.size())
+        if ((size_t)idx >= losers.size())
         {
             i++;
             continue;
