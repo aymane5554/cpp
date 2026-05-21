@@ -61,7 +61,7 @@ void PmergeMe::parse_input(int argc, char **argv, std::vector <int> &nums)
         errno = 0;
         tmp = strtol(argv[i], &end, 10);
         if (*end != '\0' || errno == ERANGE || tmp > 2147483647 || tmp < 0 || isduplicate(nums, tmp))
-            throw std::runtime_error("Error");
+            throw std::runtime_error(argv[i]);
         nums.push_back(tmp);
     }
 }
@@ -110,11 +110,17 @@ void PmergeMe::sort_deque(std::vector<int> nums)
     make_pairs(winners, losers, nums, stragler);
     sort_deque(winners);
 
-    std::deque<int>::iterator it = std::upper_bound(d.begin(), d.end(), winners[0]);
-    std::deque<int>::iterator in = std::lower_bound(d.begin(), it, losers[0]);
-    d.insert(in, losers[0]);
-
-    merge_losers_deque(losers, winners, stragler);
+    std::vector<int> winners_aligned;
+    std::vector<int> losers_aligned;
+    for (size_t i = 0; i < d.size(); i++)
+    {
+        std::vector<int>::iterator winner_iterator = std::find(winners.begin(), winners.end(), d[i]);
+        size_t index = winner_iterator - winners.begin();
+        losers_aligned.push_back(losers[index]);
+        winners_aligned.push_back(winners[index]);
+    }
+    d.insert(d.begin(), losers_aligned[0]);
+    merge_losers_deque(losers_aligned, winners_aligned, stragler);
 }
 
 void PmergeMe::sort_vec(std::vector<int> nums)
@@ -130,11 +136,17 @@ void PmergeMe::sort_vec(std::vector<int> nums)
     make_pairs(winners, losers, nums, stragler);
     sort_vec(winners);
 
-    std::vector<int>::iterator it = std::upper_bound(v.begin(), v.end(), winners[0]);
-    std::vector<int>::iterator in = std::lower_bound(v.begin(), it, losers[0]);
-    v.insert(in, losers[0]);
-
-    merge_losers_vec(losers, winners, stragler);
+    std::vector<int> winners_aligned;
+    std::vector<int> losers_aligned;
+    for (size_t i = 0; i < v.size(); i++)
+    {
+        std::vector<int>::iterator winner_iterator = std::find(winners.begin(), winners.end(), v[i]);
+        size_t index = winner_iterator - winners.begin();
+        losers_aligned.push_back(losers[index]);
+        winners_aligned.push_back(winners[index]);
+    }
+    v.insert(v.begin(), losers_aligned[0]);
+    merge_losers_vec(losers_aligned, winners_aligned, stragler);
 }
 
 void PmergeMe::merge_losers_vec(std::vector<int> &losers, std::vector<int> &winners, int stragler)
@@ -146,14 +158,14 @@ void PmergeMe::merge_losers_vec(std::vector<int> &losers, std::vector<int> &winn
     while (i < order.size())
     {
         int idx = order[i];
-        if ((size_t)idx >= losers.size())
+        if ((size_t)idx >= losers.size() || idx <= 0)
         {
             i++;
             continue;
         }
         int win = winners[idx];
         int los = losers[idx];
-        std::vector<int>::iterator it = std::upper_bound(v.begin(), v.end(), win);
+        std::vector<int>::iterator it = std::lower_bound(v.begin(), v.end(), win);
         std::vector<int>::iterator in = std::lower_bound(v.begin(), it, los);
         v.insert(in, los);
         i++;
@@ -174,14 +186,14 @@ void PmergeMe::merge_losers_deque(std::vector<int> &losers, std::vector<int> &wi
     while (i < order.size())
     {
         int idx = order[i];
-        if ((size_t)idx >= losers.size())
+        if (idx <= 0 || (size_t)idx >= losers.size())
         {
             i++;
             continue;
         }
         int win = winners[idx];
         int los = losers[idx];
-        std::deque<int>::iterator it = std::upper_bound(d.begin(), d.end(), win);
+        std::deque<int>::iterator it = std::lower_bound(d.begin(), d.end(), win);
         std::deque<int>::iterator in = std::lower_bound(d.begin(), it, los);
         d.insert(in, los);
         i++;

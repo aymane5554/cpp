@@ -5,7 +5,8 @@
 #include <cstdlib>
 #include <sstream>
 #include <stdexcept>
-#include <string>  
+#include <string> 
+#include <list>
 
 class RPN 
 {
@@ -18,5 +19,5 @@ class RPN
     private:
         bool isoperator(char c);
         int applyOperator(int a, int b, char op);
-        std::stack<int> _stack;
+        std::stack<int, std::list<int> > _stack;
 };

@@ -167,9 +167,8 @@ void parse_date(std::string &date)
     ystr = date.substr(0, pos1);
     mstr = date.substr(pos1 + 1, pos2 - pos1 - 1);
     dstr = date.substr(pos2 + 1);
-    strim(ystr);
-    strim(mstr);
-    strim(dstr);
+    if (ystr.size() != 4 || mstr.size() != 2 || dstr.size() != 2)
+        throw std::runtime_error("error -> " + date);
     year = strtol(ystr.c_str(), &end, 10);
     if (*end != '\0' || errno == ERANGE || year < 2009 || year > 2022)
         throw std::runtime_error("error -> " + date);
@@ -235,13 +234,11 @@ void BitcoinExchange::read_input()
                 end = NULL;
                 errno = 0;
                 num = line.substr(pos + 1);
-                strim(num);
-                if (num.length() == 0)
+                if (num.length() <= 1 || num[0] != ' ' || !std::isdigit(num[1]))
                     throw std::runtime_error("error -> " + line);
                 price = strtod(num.c_str(), &end);
                 if (*end != '\0' || errno == ERANGE || price < 0 || price > 1000.0)
                     throw std::runtime_error("error -> " + line);
-                strim(date);
                 exec(std::make_pair(date, price));
             }
             else
