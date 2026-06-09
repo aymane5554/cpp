@@ -1,4 +1,4 @@
-C++ = g++
+C++ = c++
 C++FLAGS = -Wall -Wextra -Werror -std=c++98
 NAME = btc
 SRCS = main.cpp BitcoinExchange.cpp

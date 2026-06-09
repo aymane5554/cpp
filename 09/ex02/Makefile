@@ -1,6 +1,6 @@
-C++ = g++
+C++ = c++
 C++FLAGS = -Wall -Wextra -Werror -std=c++98
-NAME = ./RPN
+NAME = PmergeMe
 SRCS = main.cpp PmergeMe.cpp
 OBJS = $(SRCS:%.cpp=%.o)
 INC = PmergeMe.hpp
