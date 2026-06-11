@@ -2,7 +2,11 @@
 
 void BitcoinExchange::exec(const std::pair<std::string, double> &in)
 {
-    std::cout << in.first << "=> " << in.second << " = " << db.lower_bound(in.first)->second * in.second << std::endl;
+
+    std::map <std::string, double>::iterator it = db.lower_bound(in.first);
+    if (it->first != in.first)
+        it--;
+    std::cout << in.first << "=> " << in.second << " = " << it->second * in.second << std::endl;
 }
 
 BitcoinExchange::BitcoinExchange (char *input)
