@@ -41,7 +41,7 @@ int RPN::calculate(const std::string& expression)
             _stack.pop();
             _stack.push(applyOperator(a, b, expression[i]));
         }
-        else
+        else if (expression[i] != ' ')
             throw std::runtime_error("Invalid format");
     }
     if (_stack.size() != 1)
