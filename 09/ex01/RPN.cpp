@@ -57,15 +57,34 @@ bool RPN::isoperator(char c)
 
 int RPN::applyOperator(int a, int b, char op)
 {
-    switch (op) {
-        case '+': return a + b;
-        case '-': return a - b;
-        case '*': return a * b;
-        case '/':
-            if (b == 0) {
-                throw std::runtime_error("Division by zero");
-            }
-            return a / b;
+    int res;
+
+    if (op == '+')
+    {
+        res = a + b;
+        if (a > 0 && res < 0)
+            throw std::runtime_error("overflow");
+        return res;
+    }
+    else if (op == '-')
+    {
+        res = a - b;
+        if (a < 0 && res > 0)
+            throw std::runtime_error("underflow");
+        return res;
+    }
+    else if (op == '/')
+    {
+        return a / b;
+    }
+    else if (op == '*')
+    {
+        res = a * b;
+        if (a > 0 && res < 0)
+            throw std::runtime_error("overflow");
+        else if (a < 0 && res > 0)
+            throw std::runtime_error("underflow");
+        return res;
     }
     return 0;
 }
